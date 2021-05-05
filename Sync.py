@@ -10,11 +10,11 @@ class Sync:
 
             'Type': ['IDE'],
 
-            'Typedef': ['local', '}', 'int', 'real', 'IDE', 'string', 'typedef', 'boolean', 'struct', 'global'],
+            'Typedef': ['}', 'int', 'real', 'IDE', 'string', 'typedef', 'boolean', 'struct'],
 
             'VarDecl': ['string', 'typedef', 'boolean', '}', 'int', 'struct', 'real', 'IDE'],
 
-            'VarId': ['string', 'typedef', 'local', 'boolean', '}', 'int', 'struct', 'real', 'global', 'IDE'],
+            'VarId': ['string', 'typedef', 'boolean', '}', 'int', 'struct', 'real', 'IDE'],
 
             'Var': [',', ';'],
 

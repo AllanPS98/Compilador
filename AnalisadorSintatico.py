@@ -339,13 +339,42 @@ class AnalisadorSintatico:
             self.erro_fim_arquivo_inesperado()
 
     def VarId(self):
-        pass
+        if not self.fimArquivo():
+            if self.tipo_token[self.indice_token] == 'IDE':
+                self.Var()
+            elif self.valor_token[self.indice_token] in ['=', '[', '.', '(']:
+                self.StmId()
+            else:
+                self.erro(self.numero_linha[self.indice_token],
+                          '=, [, ., (, Type(Identifier)',
+                          self.valor_token[self.indice_token],
+                          'VarId')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Var(self):
-        pass
+        if not self.fimArquivo():
+            if self.tipo_token[self.indice_token] == 'IDE':
+                self.indice_token += 1
+                self.Arrays()
+            else:
+                self.erro(self.numero_linha[self.indice_token],
+                          'Type(Identifier)',
+                          self.valor_token[self.indice_token],
+                          'Var')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def VarList(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == ',':
+                self.indice_token += 1
+                self.Var()
+                self.VarList()
+            elif self.valor_token[self.indice_token] == '=':
+                self.indice_token += 1
+                self.Expr()
+                self.VarList()
 
     def ConstDecls(self):
         if not self.fimArquivo():
