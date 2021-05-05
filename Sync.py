@@ -49,6 +49,10 @@ class Sync:
 
             'ParamType': ['IDE'],
 
+            'ParamMultArrays': [',', ')'],
+
+            'ParamArrays': [',', ')'],
+
             'Param': [',', ')'],
 
             'FuncBlock': ['$', 'function', 'procedure'],

@@ -587,28 +587,197 @@ class AnalisadorSintatico:
                 self.ArgsList()
 
     def FuncDecl(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'function':
+                self.indice_token += 1
+                self.ParamType()
+                if not self.fimArquivo():
+                    if self.tipo_token[self.indice_token] == 'IDE':
+                        self.indice_token += 1
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == '(':
+                                self.indice_token += 1
+                                self.Params()
+                                if not self.fimArquivo():
+                                    if self.valor_token[self.indice_token] == ')':
+                                        self.indice_token += 1
+                                        if not self.fimArquivo():
+                                            if self.valor_token[self.indice_token] == '{':
+                                                self.indice_token += 1
+                                                self.FuncBlock()
+                                                if not self.fimArquivo():
+                                                    if self.valor_token[self.indice_token] == '}':
+                                                        self.indice_token += 1
+                                                    else:
+                                                        self.erro(self.numero_linha[self.indice_token], '}',
+                                                                  self.valor_token[self.indice_token], 'FuncDecl')
+                                                else:
+                                                    self.erro_fim_arquivo_inesperado()
+                                            else:
+                                                self.erro(self.numero_linha[self.indice_token], '{',
+                                                          self.valor_token[self.indice_token], 'FuncDecl')
+                                        else:
+                                            self.erro_fim_arquivo_inesperado()
+                                    else:
+                                        self.erro(self.numero_linha[self.indice_token], ')',
+                                                  self.valor_token[self.indice_token], 'FuncDecl')
+                                else:
+                                    self.erro_fim_arquivo_inesperado()
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], '(',
+                                          self.valor_token[self.indice_token], 'FuncDecl')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                  self.valor_token[self.indice_token], 'FuncDecl')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'function',
+                          self.valor_token[self.indice_token], 'FuncDecl')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ProcDecl(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'procedure':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.tipo_token[self.indice_token] == 'IDE':
+                        self.indice_token += 1
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == '(':
+                                self.indice_token += 1
+                                self.Params()
+                                if not self.fimArquivo():
+                                    if self.valor_token[self.indice_token] == ')':
+                                        self.indice_token += 1
+                                        if not self.fimArquivo():
+                                            if self.valor_token[self.indice_token] == '{':
+                                                self.indice_token += 1
+                                                self.FuncBlock()
+                                                if not self.fimArquivo():
+                                                    if self.valor_token[self.indice_token] == '}':
+                                                        self.indice_token += 1
+                                                    else:
+                                                        self.erro(self.numero_linha[self.indice_token], '}',
+                                                                  self.valor_token[self.indice_token], 'ProcDecl')
+                                                else:
+                                                    self.erro_fim_arquivo_inesperado()
+                                            else:
+                                                self.erro(self.numero_linha[self.indice_token], '{',
+                                                          self.valor_token[self.indice_token], 'ProcDecl')
+                                        else:
+                                            self.erro_fim_arquivo_inesperado()
+                                    else:
+                                        self.erro(self.numero_linha[self.indice_token], ')',
+                                                  self.valor_token[self.indice_token], 'ProcDecl')
+                                else:
+                                    self.erro_fim_arquivo_inesperado()
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], '(',
+                                          self.valor_token[self.indice_token], 'ProcDecl')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                  self.valor_token[self.indice_token], 'ProcDecl')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'function',
+                          self.valor_token[self.indice_token], 'ProcDecl')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ParamType(self):
-        pass
+        if not self.fimArquivo():
+            if not self.fimArquivo():
+                if self.valor_token in ['int', 'real', 'boolean', 'string', 'struct']:
+                    if self.valor_token[self.indice_token] == 'struct':
+                        self.indice_token += 1
+                        if not self.fimArquivo():
+                            if self.tipo_token[self.indice_token] == 'IDE':
+                                self.indice_token += 1
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                          self.valor_token[self.indice_token],
+                                          'ParamType')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                elif self.tipo_token[self.indice_token] == 'IDE':
+                    self.indice_token += 1
+                else:
+                    self.erro(self.numero_linha[self.indice_token],
+                              'int, real, boolean, string, struct,Type(Identifier)',
+                              self.valor_token[self.indice_token],
+                              'ParamType')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Params(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token in ['int', 'real', 'boolean', 'string', 'struct']:
+                self.Param()
+                self.ParamsList()
 
     def Param(self):
-        pass
+        if not self.fimArquivo():
+            self.ParamType()
+            if self.tipo_token[self.indice_token] == 'IDE':
+                self.indice_token += 1
+                self.ParamArrays()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                          self.valor_token[self.indice_token],
+                          'Param')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ParamsList(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == ',':
+                self.indice_token += 1
+                self.Param()
+                self.ParamsList()
 
     def ParamArrays(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '[':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == ']':
+                        self.indice_token += 1
+                        self.ParamMultArrays()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], ']',
+                                  self.valor_token[self.indice_token],
+                                  'ParamArrays')
 
     def ParamMultArrays(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '[':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.tipo_token[self.indice_token] == 'NRO':
+                        self.indice_token += 1
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == ']':
+                                self.indice_token += 1
+                                self.ParamMultArrays()
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], ']',
+                                          self.valor_token[self.indice_token],
+                                          'ParamMultArrays')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'Type(Number)',
+                                  self.valor_token[self.indice_token],
+                                  'ParamMultArrays')
+                else:
+                    self.erro_fim_arquivo_inesperado()
 
     def FuncBlock(self):
         pass
