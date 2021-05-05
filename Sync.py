@@ -6,23 +6,25 @@ class Sync:
 
             'StructBlock': ['function', 'procedure', 'struct', 'start'],
 
+            'ConstBlock': ['procedure', 'var', 'function', 'start', 'struct', '{', '}'],
+
             'Type': ['IDE'],
 
             'Typedef': ['local', '}', 'int', 'real', 'IDE', 'string', 'typedef', 'boolean', 'struct', 'global'],
 
-            'VarDecl': ['string', 'typedef', 'local', 'boolean', '}', 'int', 'struct', 'real', 'global', 'IDE'],
+            'VarDecl': ['string', 'typedef', 'boolean', '}', 'int', 'struct', 'real', 'IDE'],
 
             'VarId': ['string', 'typedef', 'local', 'boolean', '}', 'int', 'struct', 'real', 'global', 'IDE'],
 
             'Var': [',', ';'],
 
-            'ConstDecl': ['string', 'typedef', 'local', 'boolean', '}', 'int', 'struct', 'real', 'global', 'IDE'],
+            'ConstDecl': ['string', 'boolean', '}', 'int', 'real'],
 
             'ConstId': ['string', 'typedef', 'local', 'boolean', '}', 'int', 'struct', 'real', 'global', 'IDE'],
 
             'Const': ['=', ','],
 
-            'ConstList': ['string', 'typedef', 'local', 'boolean', '}', ';', 'int', 'struct', 'real', 'global', 'IDE'],
+            'ConstList': ['string', 'boolean', '}', ';', 'int', 'real', 'IDE'],
 
             'DeclAtribute': [';'],
 
@@ -41,7 +43,7 @@ class Sync:
 
             'FuncDecl': ['$', 'function', 'procedure'],
 
-            'StartBlock': ['$', 'function', 'procedure', 'struct', 'typedef', '{', 'if', 'while', 'return', 'local', 'global', 'print', 'read'],
+            'StartBlock': ['$', 'function', 'procedure', 'struct', 'typedef', '{', 'if', 'while', 'return', 'local', 'global', 'print', 'read', 'IDE'],
 
             'ProcDecl': ['$', 'function', 'procedure'],
 

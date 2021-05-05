@@ -58,56 +58,285 @@ class AnalisadorSintatico:
                                         if not self.fimArquivo():
                                             if self.valor_token[self.indice_token] == '}':
                                                 self.indice_token += 1
-                                                self.Decls()
                                             else:
-                                                self.erro(self.indice_token, '}', self.valor_token[self.indice_token],
+                                                self.erro(self.numero_linha[self.indice_token], '}',
+                                                          self.valor_token[self.indice_token],
                                                           'StartBlock')
                                         else:
                                             self.erro_fim_arquivo_inesperado()
                                     else:
-                                        self.erro(self.indice_token, '{', self.valor_token[self.indice_token],
+                                        self.erro(self.numero_linha[self.indice_token], '{',
+                                                  self.valor_token[self.indice_token],
                                                   'StartBlock')
                                 else:
                                     self.erro_fim_arquivo_inesperado()
                             else:
-                                self.erro(self.indice_token, ')', self.valor_token[self.indice_token], 'StartBlock')
+                                self.erro(self.numero_linha[self.indice_token], ')',
+                                          self.valor_token[self.indice_token], 'StartBlock')
                         else:
                             self.erro_fim_arquivo_inesperado()
                     else:
-                        self.erro(self.indice_token, '(', self.valor_token[self.indice_token], 'StartBlock')
+                        self.erro(self.numero_linha[self.indice_token], '(', self.valor_token[self.indice_token],
+                                  'StartBlock')
                 else:
                     self.erro_fim_arquivo_inesperado()
             else:
-                self.erro(self.indice_token, 'start', self.valor_token[self.indice_token], 'StartBlock')
+                self.erro(self.numero_linha[self.indice_token], 'start', self.valor_token[self.indice_token],
+                          'StartBlock')
         else:
+            # print('entrou aq 32')
             self.erro_fim_arquivo_inesperado()
 
     def Decls(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['procedure', 'function', 'struct', 'typedef']:
+                self.Decl()
+                self.Decls()
 
     def Decl(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['struct', 'typedef']:
+                self.StructBlock()
+            elif self.valor_token[self.indice_token] == 'procedure':
+                self.ProcDecl()
+            elif self.valor_token[self.indice_token] == 'function':
+                self.FuncDecl()
+            else:
+                self.erro(self.numero_linha[self.indice_token],
+                          'function, procedure, struct, typedef',
+                          self.valor_token[self.indice_token],
+                          'Decl')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def StructBlock(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'struct':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.tipo_token[self.indice_token] == 'IDE':
+                        self.indice_token += 1
+                        self.Extends()
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == '{':
+                                self.indice_token += 1
+                                self.VarDecls()
+                                if not self.fimArquivo():
+                                    if self.valor_token[self.indice_token] == '}':
+                                        self.indice_token += 1
+                                    else:
+                                        self.erro(self.numero_linha[self.indice_token], '}',
+                                                  self.valor_token[self.indice_token],
+                                                  'StructBlock')
+                                else:
+                                    self.erro_fim_arquivo_inesperado()
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], '{',
+                                          self.valor_token[self.indice_token],
+                                          'StructBlock')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                  self.valor_token[self.indice_token],
+                                  'StructBlock')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            elif self.valor_token[self.indice_token] == 'typedef':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == 'struct':
+                        self.indice_token += 1
+                        self.Extends()
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == '{':
+                                self.indice_token += 1
+                                self.VarDecls()
+                                if not self.fimArquivo():
+                                    if self.valor_token[self.indice_token] == '}':
+                                        self.indice_token += 1
+                                        if not self.fimArquivo():
+                                            if self.tipo_token[self.indice_token] == 'IDE':
+                                                self.indice_token += 1
+                                                if not self.fimArquivo():
+                                                    if self.valor_token[self.indice_token] == ';':
+                                                        self.indice_token += 1
+                                                    else:
+                                                        self.erro(self.numero_linha[self.indice_token],
+                                                                  ';',
+                                                                  self.valor_token[self.indice_token],
+                                                                  'StructBlock')
+                                                else:
+                                                    self.erro_fim_arquivo_inesperado()
+                                            else:
+                                                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                                          self.valor_token[self.indice_token],
+                                                          'StructBlock')
+                                        else:
+                                            self.erro_fim_arquivo_inesperado()
+                                    else:
+                                        self.erro(self.numero_linha[self.indice_token], '}',
+                                                  self.valor_token[self.indice_token],
+                                                  'StructBlock')
+                                else:
+                                    self.erro_fim_arquivo_inesperado()
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], '{',
+                                          self.valor_token[self.indice_token],
+                                          'StructBlock')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'struct, typedef',
+                          self.valor_token[self.indice_token],
+                          'StructBlock')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Extends(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'extends':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.tipo_token[self.indice_token] == 'IDE':
+                        self.indice_token += 1
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                  self.valor_token[self.indice_token],
+                                  'Extends')
+                else:
+                    self.erro_fim_arquivo_inesperado()
 
     def ConstBlock(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'const':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == '{':
+                        self.indice_token += 1
+                        self.ConstDecls()
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == '}':
+                                self.indice_token += 1
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], '}',
+                                          self.valor_token[self.indice_token],
+                                          'ConstBlock')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], '{', self.valor_token[self.indice_token],
+                                  'ConstBlock')
+                else:
+                    self.erro_fim_arquivo_inesperado()
 
     def VarBlock(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'var':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == '{':
+                        self.indice_token += 1
+                        self.VarDecls()
+                        if not self.fimArquivo():
+                            if self.valor_token[self.indice_token] == '}':
+                                self.indice_token += 1
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], '}',
+                                          self.valor_token[self.indice_token],
+                                          'VarBlock')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], '{', self.valor_token[self.indice_token],
+                                  'VarBlock')
+                else:
+                    self.erro_fim_arquivo_inesperado()
 
     def Typedef(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == 'typedef':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.valor_token in ['int', 'real', 'boolean', 'string', 'struct']:
+                        if self.valor_token[self.indice_token] == 'struct':
+                            self.indice_token += 1
+                            if not self.fimArquivo():
+                                if self.tipo_token[self.indice_token] == 'IDE':
+                                    self.indice_token += 1
+                                else:
+                                    self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                              self.valor_token[self.indice_token],
+                                              'Typedef')
+                            else:
+                                self.erro_fim_arquivo_inesperado()
+                        self.indice_token += 1
+                        if not self.fimArquivo():
+                            if self.tipo_token[self.indice_token] == 'IDE':
+                                self.indice_token += 1
+                                if not self.fimArquivo():
+                                    if self.valor_token[self.indice_token] == ';':
+                                        self.indice_token += 1
+                                    else:
+                                        self.erro(self.numero_linha[self.indice_token], ';',
+                                                  self.valor_token[self.indice_token],
+                                                  'Typedef')
+                                else:
+                                    self.erro_fim_arquivo_inesperado()
+                            else:
+                                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                          self.valor_token[self.indice_token],
+                                          'Typedef')
+                        else:
+                            self.erro_fim_arquivo_inesperado()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'int, real, boolean, string, struct',
+                                  self.valor_token[self.indice_token],
+                                  'Typedef')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'typedef',
+                          self.valor_token[self.indice_token],
+                          'Typedef')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def VarDecls(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['int', 'real', 'boolean', 'string', 'struct', 'typedef'] \
+                    or self.tipo_token[self.indice_token] == 'IDE':
+                self.VarDecl()
+                self.VarDecls()
 
     def VarDecl(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['int', 'real', 'boolean', 'string', 'struct'] \
+                    or self.tipo_token[self.indice_token] == 'IDE':
+                self.indice_token += 1
+                self.Var()
+                self.VarList()
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == ';':
+                        self.indice_token += 1
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], ';',
+                                  self.valor_token[self.indice_token],
+                                  'VarDecl')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            elif self.valor_token[self.indice_token] == 'typedef':
+                self.Typedef()
+            elif self.tipo_token[self.indice_token] == 'IDE':
+                self.indice_token += 1
+                self.VarId()
+            else:
+                self.erro(self.numero_linha[self.indice_token],
+                          'int, real, boolean, string, struct, typedef, Type(Identifier)',
+                          self.valor_token[self.indice_token],
+                          'VarDecl')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def VarId(self):
         pass
@@ -119,52 +348,200 @@ class AnalisadorSintatico:
         pass
 
     def ConstDecls(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['string', 'int', 'real', 'boolean']:
+                self.ConstDecl()
+                self.ConstDecls()
 
     def ConstDecl(self):
-        pass
-
-    def ConstId(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['string', 'int', 'real', 'boolean']:
+                self.indice_token += 1
+                self.Const()
+                self.ConstList()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'string, int, real, boolean',
+                          self.valor_token[self.indice_token],
+                          'ConstDecl')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Const(self):
-        pass
+        if not self.fimArquivo():
+            if self.tipo_token[self.indice_token] == 'IDE':
+                self.indice_token += 1
+                self.Arrays()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)', self.valor_token[self.indice_token],
+                          'Const')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ConstList(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == ',':
+                self.indice_token += 1
+                self.Const()
+                self.ConstList()
+            elif self.valor_token[self.indice_token] == '=':
+                self.indice_token += 1
+                self.DeclAtribute()
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == ';':
+                        self.indice_token += 1
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], ';',
+                                  self.valor_token[self.indice_token], 'ConstList')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], ', ou =',
+                          self.valor_token[self.indice_token], 'ConstList')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def DeclAtribute(self):
-        pass
+        if not self.fimArquivo():
+            if self.tipo_token[self.indice_token] in ['IDE', 'CAD', 'NRO'] \
+                    or self.valor_token[self.indice_token] in ['true', 'false']:
+                self.indice_token += 1
+            elif self.valor_token[self.indice_token] == '{':
+                self.ArrayDecl()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier), Type(String), Type(Boolean), '
+                                                                'Type(Array)',
+                          self.valor_token[self.indice_token], 'DeclAtribute')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ArrayDecl(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '{':
+                self.indice_token += 1
+                self.ArrayDef()
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == '}':
+                        self.indice_token += 1
+                        self.ArrayVector()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], '}',
+                                  self.valor_token[self.indice_token], 'ArrayDecl')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], '{',
+                          self.valor_token[self.indice_token], 'ArrayDecl')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ArrayVector(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == ',':
+                self.indice_token += 1
+                self.ArrayDecl()
 
     def ArrayDef(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['false', 'local', 'true', '!', '(', 'global'] \
+                    or self.tipo_token[self.indice_token] in ['CAD', 'IDE']:
+                self.indice_token += 1
+                self.Expr()
+                self.ArrayExpr()
+            else:
+                self.erro(self.numero_linha[self.indice_token], 'Type(Identifier), Type(String), Type(Boolean), global'
+                                                                ', local, !, (',
+                          self.valor_token[self.indice_token], 'ArrayDef')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def ArrayExpr(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == ',':
+                self.indice_token += 1
+                self.ArrayDef()
 
     def Array(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '[':
+                self.indice_token += 1
+                self.Index()
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == ']':
+                        self.indice_token += 1
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], ']',
+                                  self.valor_token[self.indice_token], 'Array')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], '[',
+                          self.valor_token[self.indice_token], 'Array')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Index(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['false', 'local', 'true', '!', '(', 'global'] \
+                    or self.tipo_token[self.indice_token] in ['CAD', 'IDE']:
+                self.Expr()
 
     def Arrays(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '[':
+                self.Array()
+                self.Arrays()
 
     def Assign(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '=':
+                self.indice_token += 1
+                self.Expr()
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == ';':
+                        self.indice_token += 1
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], ';',
+                                  self.valor_token[self.indice_token], 'Assign')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            elif self.valor_token[self.indice_token] in ['++', '--']:
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.valor_token[self.indice_token] == ';':
+                        self.indice_token += 1
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], ';',
+                                  self.valor_token[self.indice_token], 'Assign')
+            else:
+                self.erro(self.numero_linha[self.indice_token], '=, ++ ou --',
+                          self.valor_token[self.indice_token], 'Assign')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Access(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '.':
+                self.indice_token += 1
+                if not self.fimArquivo():
+                    if self.tipo_token[self.indice_token] == 'IDE':
+                        self.indice_token += 1
+                        self.Arrays()
+                    else:
+                        self.erro(self.numero_linha[self.indice_token], 'Type(Identifier)',
+                                  self.valor_token[self.indice_token], 'Access')
+                else:
+                    self.erro_fim_arquivo_inesperado()
+            else:
+                self.erro(self.numero_linha[self.indice_token], '.',
+                          self.valor_token[self.indice_token], 'Access')
+        else:
+            self.erro_fim_arquivo_inesperado()
 
     def Accesses(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == '.':
+                self.Access()
+                self.Accesses()
 
     def Args(self):
         pass
@@ -313,8 +690,8 @@ class AnalisadorSintatico:
     def procurar_token_sincronizacao(self, nao_terminal):
         conjuntoFollow = Sync.Sync().sync_tokens[nao_terminal]
         while not self.fimArquivo():
-            if self.valor_token[self.indice_token] not in conjuntoFollow \
-                    or self.tipo_token[self.indice_token] not in conjuntoFollow:
+            if self.valor_token[self.indice_token] in conjuntoFollow \
+                    or self.tipo_token[self.indice_token] in conjuntoFollow:
                 break
             self.indice_token += 1
         if self.fimArquivo():
@@ -325,18 +702,21 @@ class AnalisadorSintatico:
     def reiniciar(self, nao_terminal, token_atual):
         if nao_terminal == 'StartBlock':
             self.ErroStartBlock(token_atual)
+        elif nao_terminal == 'ConstBlock':
+            self.ErroConstBlock(token_atual)
 
     def ErroStartBlock(self, token_atual):
-        if token_atual in ['function', 'procedure', 'struct', 'typedef']:
-            self.Decls()
-        elif token_atual == '{':
+        if token_atual == '{':
             self.indice_token += 1
             self.FuncBlock()
-            self.Decls()
         elif token_atual == ['if', 'while', 'return', 'local', 'global', 'print', 'read', 'var'] \
                 or self.tipo_token[self.indice_token] == 'IDE':
             self.FuncBlock()
-            self.Decls()
+
+    def ErroConstBlock(self, token_atual):
+        self.indice_token += 1
+        if token_atual == '{':
+            self.ConstDecls()
 
     def erro_fim_arquivo_inesperado(self):
         if self.fimArquivo():
