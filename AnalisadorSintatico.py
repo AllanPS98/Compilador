@@ -573,10 +573,18 @@ class AnalisadorSintatico:
                 self.Accesses()
 
     def Args(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] in ['!', '(', 'true', 'false'] \
+                    or self.tipo_token[self.indice_token] in ['NRO', 'CAD', 'IDE']:
+                self.Expr()
+                self.ArgsList()
 
     def ArgsList(self):
-        pass
+        if not self.fimArquivo():
+            if self.valor_token[self.indice_token] == ',':
+                self.indice_token += 1
+                self.Expr()
+                self.ArgsList()
 
     def FuncDecl(self):
         pass
