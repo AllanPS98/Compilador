@@ -1211,7 +1211,7 @@ class AnalisadorSintatico:
                 self.indice_token += 1
                 self.Value()
             elif self.valor_token[self.indice_token] in ['true', 'false'] \
-                or self.tipo_token[self.indice_token] in ['CAD', 'NRO']:
+                    or self.tipo_token[self.indice_token] in ['CAD', 'NRO']:
                 self.indice_token += 1
             elif self.valor_token[self.indice_token] in ['global', 'local']:
                 self.indice_token += 1
@@ -1458,4 +1458,6 @@ class AnalisadorSintatico:
             print(f'Linha {self.numero_linha[len(self.numero_linha) - 1]}'
                   f' - Erro Sintático'
                   f' - Esperava: ', 'Token', f' / Recebido: EOF')
-            exit()
+            self.resposta.append(f'Linha {self.numero_linha[len(self.numero_linha) - 1]}'
+                                 f' - Erro Sintático'
+                                 f' - Esperava: ', 'Token', f' / Recebido: EOF')
